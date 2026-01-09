@@ -300,6 +300,7 @@
                 <h3>Publikasikan Pengumuman Kelulusan</h3>
             </div>
             <form method="POST" action="{{ url_for('publish_pengumuman_kelulusan') }}">
+                <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                 <div class="form-group">
                     <label>Judul Pengumuman:</label>
                     <input type="text" name="judul" value="Pengumuman Kelulusan PPDB SMA Negeri 317">
