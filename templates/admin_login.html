@@ -6,6 +6,8 @@
         <h2>Login Admin</h2>
  
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
+            
             <div class="form-group">
                 <label for="username">Username Admin</label>
                 <input type="text" id="username" name="username" required 
