@@ -13,6 +13,7 @@
         {% endif %}
         
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
             <input type="hidden" name="role" value="{{ request.args.get('role', 'siswa') }}">
             
             <div class="form-group">
