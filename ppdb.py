@@ -12,6 +12,8 @@ import re
 import time
 import html
 import hashlib
+from flask_wtf.csrf import CSRFProtect, generate_csrf
+import secrets
 
 app = Flask(__name__)
 
@@ -20,6 +22,14 @@ def inject_background_image():
     return dict(background_image_url=BACKGROUND_IMAGE_URL)
 
 app.config['SECRET_KEY'] = 'rahasia_sekali_ppdb_317'
+
+# === KONFIGURASI CSRF ===
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['WTF_CSRF_SECRET_KEY'] = 'csrf-secure-key-317-' + secrets.token_urlsafe(32)
+app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 jam
+
+# Inisialisasi CSRF
+csrf = CSRFProtect(app)
 
 # === KONFIGURASI DATABASE ===
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ppdb_admin:PPdb317#@10.13.8.34:3306/ppdb_db'
@@ -137,6 +147,42 @@ def get_popup_message(jenis_notifikasi, user):
     }
     return messages.get(jenis_notifikasi, "")
 
+# ===== CSRF HELPER =====
+def csrf_protected(f):
+    """Decorator untuk routes yang perlu CSRF protection"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Skip CSRF untuk metode GET, HEAD, OPTIONS
+        if request.method in ['GET', 'HEAD', 'OPTIONS']:
+            return f(*args, **kwargs)
+        
+        # Skip untuk endpoint tertentu jika diperlukan
+        exempt_endpoints = ['tutup_popup']  # Tambahkan endpoint yang di-exempt jika ada
+        if request.endpoint in exempt_endpoints:
+            return f(*args, **kwargs)
+        
+        # Validasi CSRF
+        csrf_token = request.form.get('csrf_token')
+        if not csrf_token:
+            # Cek header untuk AJAX request
+            csrf_token = request.headers.get('X-CSRF-Token')
+        
+        if not csrf.validate_csrf(csrf_token):
+            ip_address = request.remote_addr
+            username = session.get('username', 'anonymous')
+            log_security_event("CSRF_ATTEMPT", ip_address, username, 
+                             f"Failed CSRF validation for {request.endpoint}")
+            flash('Token keamanan tidak valid. Silakan refresh halaman dan coba lagi.', 'error')
+            return redirect(request.referrer or url_for('home'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Update context processor untuk CSRF
+@app.context_processor
+def inject_csrf_context():
+    return dict(generate_csrf=generate_csrf)
+
 # ===== MIDDLEWARE & DECORATORS =====
 def admin_required(f):
     @wraps(f)
@@ -177,6 +223,7 @@ def home():
                          total_siswa=total_siswa)
 
 @app.route('/register', methods=['GET', 'POST'])
+@csrf_protected
 def register():
     if request.method == 'POST':
         username = sanitize_input(request.form['username'])
@@ -226,6 +273,7 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
+@csrf_protected
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -297,6 +345,7 @@ def login():
     return render_template('login.html', role=role)
 
 @app.route('/ppdb-admin317/login', methods=['GET', 'POST'])
+@csrf_protected
 def admin_login():
     if request.method == 'POST':
         username = request.form['username']
@@ -346,6 +395,7 @@ def dashboard_siswa():
 @app.route('/lengkapi_data_siswa', methods=['GET', 'POST'])
 @login_required
 @siswa_required
+@csrf_protected
 def lengkapi_data_siswa():
     user = User.query.get(session['user_id'])
     
@@ -396,6 +446,7 @@ def lengkapi_data_siswa():
 @app.route('/upload_bukti', methods=['GET', 'POST'])
 @login_required
 @siswa_required
+@csrf_protected
 def upload_bukti():
     user = User.query.get(session['user_id'])
     
@@ -450,6 +501,7 @@ def upload_bukti():
 @app.route('/upload_dokumen', methods=['GET', 'POST'])
 @login_required
 @siswa_required
+@csrf_protected
 def upload_dokumen():
     user = User.query.get(session['user_id'])
     
@@ -516,6 +568,7 @@ def upload_dokumen():
 @app.route('/selesaikan_pendaftaran', methods=['POST'])
 @login_required
 @siswa_required
+@csrf_protected
 def selesaikan_pendaftaran():
     user = User.query.get(session['user_id'])
     
@@ -654,6 +707,7 @@ def detail_siswa(user_id):
 
 @app.route('/ppdb-admin317/update_status/<int:user_id>', methods=['POST'])
 @admin_required
+@csrf_protected
 def update_status(user_id):
     status = request.form['status']
     user = User.query.get(user_id)
@@ -723,6 +777,7 @@ def update_status(user_id):
 
 @app.route('/ppdb-admin317/update_dokumen_status/<int:dokumen_id>', methods=['POST'])
 @admin_required
+@csrf_protected
 def update_dokumen_status(dokumen_id):
     status = request.form['status']
     dokumen = DokumenTambahan.query.get(dokumen_id)
@@ -761,6 +816,7 @@ def download_file(file_id, file_type):
 
 @app.route('/ppdb-admin317/buat_pengumuman', methods=['POST'])
 @admin_required
+@csrf_protected
 def buat_pengumuman():
     judul = sanitize_input(request.form['judul'])
     isi = sanitize_input(request.form['isi'])
@@ -802,6 +858,7 @@ def daftar_kelulusan():
 
 @app.route('/ppdb-admin317/publish_pengumuman_kelulusan', methods=['POST'])
 @admin_required
+@csrf_protected
 def publish_pengumuman_kelulusan():
     judul = sanitize_input(request.form.get('judul', 'Pengumuman Kelulusan PPDB SMA Negeri 317'))
     tambahan_teks = sanitize_input(request.form.get('tambahan_teks', ''))
