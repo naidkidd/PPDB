@@ -30,6 +30,7 @@
                     <p class="file-name">{{ dokumen['ijazah'].filename|truncate(20) }}</p>
                     <p class="status-info">Status: <span class="status-{{ dokumen['ijazah'].status }}">{{ dokumen['ijazah'].status|title }}</span></p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="ijazah">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-secondary">Ganti File</button>
@@ -37,6 +38,7 @@
                 {% else %}
                     <p class="status-missing">❌ Belum diupload</p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="ijazah">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-primary">Upload Ijazah</button>
@@ -52,6 +54,7 @@
                     <p class="file-name">{{ dokumen['rapor'].filename|truncate(20) }}</p>
                     <p class="status-info">Status: <span class="status-{{ dokumen['rapor'].status }}">{{ dokumen['rapor'].status|title }}</span></p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="rapor">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-secondary">Ganti File</button>
@@ -59,6 +62,7 @@
                 {% else %}
                     <p class="status-missing">❌ Belum diupload</p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="rapor">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-primary">Upload Rapor</button>
@@ -74,6 +78,7 @@
                     <p class="file-name">{{ dokumen['kk'].filename|truncate(20) }}</p>
                     <p class="status-info">Status: <span class="status-{{ dokumen['kk'].status }}">{{ dokumen['kk'].status|title }}</span></p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="kk">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-secondary">Ganti File</button>
@@ -81,6 +86,7 @@
                 {% else %}
                     <p class="status-missing">❌ Belum diupload</p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="kk">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-primary">Upload KK</button>
@@ -96,6 +102,7 @@
                     <p class="file-name">{{ dokumen['akta'].filename|truncate(20) }}</p>
                     <p class="status-info">Status: <span class="status-{{ dokumen['akta'].status }}">{{ dokumen['akta'].status|title }}</span></p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="akta">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-secondary">Ganti File</button>
@@ -103,6 +110,7 @@
                 {% else %}
                     <p class="status-missing">❌ Belum diupload</p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="akta">
                         <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-primary">Upload Akta</button>
@@ -118,6 +126,7 @@
                     <p class="file-name">{{ dokumen['foto'].filename|truncate(20) }}</p>
                     <p class="status-info">Status: <span class="status-{{ dokumen['foto'].status }}">{{ dokumen['foto'].status|title }}</span></p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="foto">
                         <input type="file" name="file" accept=".jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-secondary">Ganti File</button>
@@ -125,6 +134,7 @@
                 {% else %}
                     <p class="status-missing">❌ Belum diupload</p>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                         <input type="hidden" name="jenis_dokumen" value="foto">
                         <input type="file" name="file" accept=".jpg,.jpeg,.png" required>
                         <button type="submit" class="btn-primary">Upload Foto</button>
