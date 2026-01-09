@@ -426,6 +426,7 @@
                                 <td>{{ data.user.tanggal_daftar.strftime('%d-%m-%Y') if data.user.tanggal_daftar else '-' }}</td>
                                 <td>
                                     <form method="POST" action="{{ url_for('update_status', user_id=data.user.id) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                                         <select name="status" class="status-select" onchange="this.form.submit()">
                                             <option value="belum_lengkap" {% if data.user.status == 'belum_lengkap' %}selected{% endif %}>Belum Lengkap</option>
                                             <option value="menunggu" {% if data.user.status == 'menunggu' %}selected{% endif %}>Menunggu</option>
@@ -455,6 +456,7 @@
                     <h3>Buat Pengumuman Manual</h3>
                 </div>
                 <form method="POST" action="{{ url_for('buat_pengumuman') }}">
+                    <input type="hidden" name="csrf_token" value="{{ generate_csrf() }}">
                     <div class="form-group">
                         <label for="judul">Judul Pengumuman</label>
                         <input type="text" id="judul" name="judul" required placeholder="Masukkan judul pengumuman...">
