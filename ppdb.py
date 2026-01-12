@@ -23,15 +23,15 @@ def inject_background_image():
 
 app.config['SECRET_KEY'] = 'rahasia_sekali_ppdb_317'
 
-# === KONFIGURASI CSRF ===
+# K O N F I G - C S R F
 app.config['WTF_CSRF_ENABLED'] = True
 app.config['WTF_CSRF_SECRET_KEY'] = 'csrf-secure-key-317-' + secrets.token_urlsafe(32)
 app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 jam
 
-# Inisialisasi CSRF
+# I N I S I A L I S A S I - C S R F
 csrf = CSRFProtect(app)
 
-# === KONFIGURASI DATABASE ===
+# K O N F I G - D B
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ppdb_admin:PPdb317#@10.13.8.34:3306/ppdb_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -42,7 +42,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
-# Konfigurasi keamanan
+# S E S S I O N - C O O K I E
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=False,
@@ -51,12 +51,12 @@ app.config.update(
 
 db.init_app(app)
 
-# Setup logging
+# L O G G I N G - A P P
 handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
 handler.setLevel(logging.INFO)
 app.logger.addHandler(handler)
 
-# Security logging
+# S E C U R I T Y - L O G
 security_handler = RotatingFileHandler('security.log', maxBytes=10000, backupCount=3)
 security_handler.setLevel(logging.WARNING)
 security_logger = logging.getLogger('security')
@@ -64,7 +64,7 @@ security_logger.addHandler(security_handler)
 
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 
-# ===== SECURITY CLASSES & FUNCTIONS =====
+# B R U T E F O R C E
 class RateLimiter:
     def __init__(self):
         self.attempts = {}
@@ -105,6 +105,7 @@ class RateLimiter:
 
 rate_limiter = RateLimiter()
 
+# V A L I D A S I 
 def validate_input(input_string, max_length=100):
     if input_string is None:
         return False
@@ -115,7 +116,8 @@ def validate_input(input_string, max_length=100):
     if not re.match(r'^[a-zA-Z0-9_@.\-\s\p{L}]*$', input_string):
         return False
     return True
-
+    
+# S A N I T A S I
 def sanitize_input(input_string):
     if input_string:
         return html.escape(input_string.strip())
@@ -147,7 +149,7 @@ def get_popup_message(jenis_notifikasi, user):
     }
     return messages.get(jenis_notifikasi, "")
 
-# ===== CSRF HELPER =====
+# C S R F - H E L P E R
 def csrf_protected(f):
     """Decorator untuk routes yang perlu CSRF protection"""
     @wraps(f)
@@ -156,12 +158,12 @@ def csrf_protected(f):
         if request.method in ['GET', 'HEAD', 'OPTIONS']:
             return f(*args, **kwargs)
         
-        # Skip untuk endpoint tertentu jika diperlukan
-        exempt_endpoints = ['tutup_popup']  # Tambahkan endpoint yang di-exempt jika ada
+        # Skip untuk endpoint tertentu kalo diperlukan
+        exempt_endpoints = ['tutup_popup']  # Tambahin endpoint yang diexempt jika ada
         if request.endpoint in exempt_endpoints:
             return f(*args, **kwargs)
         
-        # Validasi CSRF
+        # V A L I D A S I - C S R F
         csrf_token = request.form.get('csrf_token')
         if not csrf_token:
             # Cek header untuk AJAX request
@@ -192,6 +194,7 @@ def admin_required(f):
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
+    
 
 def login_required(f):
     @wraps(f)
@@ -970,3 +973,4 @@ if __name__ == '__main__':
     print("   http://0.0.0.0:5000")
 
     app.run(debug=True, host='0.0.0.0', port=5000)
+
