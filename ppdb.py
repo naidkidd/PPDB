@@ -21,7 +21,7 @@ app = Flask(__name__)
 def inject_background_image():
     return dict(background_image_url=BACKGROUND_IMAGE_URL)
 
-app.config['SECRET_KEY'] = 'rahasia_sekali_ppdb_317'
+app.config['SECRET_KEY'] = '- - - - '
 
 # K O N F I G - C S R F
 app.config['WTF_CSRF_ENABLED'] = True
@@ -973,4 +973,5 @@ if __name__ == '__main__':
     print("   http://0.0.0.0:5000")
 
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
